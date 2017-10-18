@@ -1,43 +1,76 @@
 # Swift 编码规范
 
-
-## 说明
-
-本编码规范基于 [The Official raywenderlich.com Swift Style Guide](https://github.com/raywenderlich/swift-style-guide)。
-
 编码规范的目标是保证代码的简洁性，可读性和可维护性。
 
 严格的编码规范，可以改善代码的的可读性，让团队中的开发人员能轻松的阅读、理解彼此的代码，从而最大限度的提高团队开发的合作效率，尽可能的减少项目的维护成本；长期的规范性编码还可以让开发人员养成好的编码习惯，甚至锻炼出更加严谨的思维。
 
 
+## 说明
 
-### Xcode 工程
+[API Design Guidelines](https://swift.org/documentation/api-design-guidelines)是苹果专门针对 API 的一个规范，本规范涉及到一些相关的内容，大都是保持和苹果的规范一致。
 
-物理文件应该与 Xcode 工程文件保持同步来避免文件扩张。任何 Xcode 分组的创建应该在文件系统中体现。代码不仅是根据类型来分组，而且还可以根据功能来分组，这样代码更加清晰。
+本编码规范基于 [The Official raywenderlich.com Swift Style Guide](https://github.com/raywenderlich/swift-style-guide)，并加入了自己的一些偏好。
 
-Organization 和 Bundle Identifier
-在涉及 Xcode 项目的地方，Organization 应设置为组织名称，并将 Bundle Identifier 设置为 `com.组织缩写.项目名称`。
+同时，Swift 语言在快速的发展中，这个规范也会随着 Swift 的发展、以及我们对 Swift 更多的使用和了解，持续地进行修改和完善。
 
+关于这个编程语言的所有规范，如果这里没有写到，那就在苹果的文档里： 
 
-
-### 语言
-
-应该使用美式英语来定义接口。
-
-**首选：**
-
-```swift
-let whiteColor = "white"
-```
-
-**不推荐：**
-
-```swift
-let baiColour = "white"
-```
+* [Cocoa 基本原理指南](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CocoaFundamentals/Introduction/Introduction.html)
+* [Cocoa 编码指南](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html)
+* [iOS 应用编程指南](http://developer.apple.com/library/ios/#documentation/iphone/conceptual/iphoneosprogrammingguide/Introduction/Introduction.html)
 
 
-### 命名
+## 目录
+
+* [正确性](#正确性)
+* [命名](#命名)
+  * [文章](#文章)
+  * [代理](#代理)
+  * [使用类型推断上下文](#使用类型推断上下文)
+  * [泛型](#泛型)
+  * [类前缀](#类前缀)
+  * [语言](#语言)
+* [代码组织](#代码组织)
+  * [协议一致性](#协议一致性)
+  * [无用的代码](#无用的代码)
+  * [最少引入](#最少引入)
+* [间隔](#间隔)
+* [注释](#注释)
+* [类和结构体](#类和结构体)
+  * [应该使用哪一个](#应该使用哪一个)
+  * [类定义](#类定义)
+  * [self 的使用](#self-的使用)
+  * [计算属性](#计算属性)
+  * [Final](#final)
+* [函数声明](#函数声明)
+* [闭包表达式](#闭包表达式)
+* [类型](#类型)
+  * [常量](#常量)
+  * [静态方法和变量类型属性](#静态方法和变量类型属性)
+  * [可选类型](#可选类型)
+  * [结构体构造器](#结构体构造器)
+  * [延迟初始化](#延迟初始化)
+  * [类型推断](#类型推断)
+  * [语法糖](#语法糖)
+* [函数 VS 方法](#函数-vs-方法)
+* [内存管理](#内存管理)
+  * [延长对象生命周期](#延长对象生命周期)
+* [访问控制](#访问控制)
+* [控制流程](#控制流程)
+* [黄金路径](#黄金路径)
+  * [失败防护](#失败防护)
+* [分号](#分号)
+* [圆括号](#圆括号)
+* [组织和应用的标识符](#组织和应用的标识符)
+* [参考](#参考)
+
+
+## 正确性
+
+把警告当做错误处理（打开 `Build Settings` 下 `Treat Warnings as Errors`），这条规则从根本禁止了一些文法使用，例如推荐使用 `#selector` 文而不是用字符串。并尽可能多的启用其他警告：[Additional Warnings](http://boredzo.org/blog/archives/2009-11-07/warnings)，如果你需要忽略特定的警告，请使用[Clang 的编译特性](http://clang.llvm.org/docs/UsersManual.html#controlling-diagnostics-via-pragmas)。
+
+
+## 命名
 
 使用具有描述性的名称，并结合驼峰式命名规则给类方法和变量等命名。类别名称（类，结构体，枚举和协议）首字母大写，而方法或者变量的首字母小写。
 
@@ -101,52 +134,54 @@ class Counter {
 }
 ```
 
-
-### 协议
-
-根据苹果接口设计指导准则，协议名称用来描述一些东西是什么的时候是名词。例如：Collection，WidgetFactory。若协议名称用来描述能力，则应该以 -ing，-able，或 -ible 结尾，例如：Equatable，Resizing。
-
-
-### 枚举
-
-根据 Swift3 苹果接口设计指导文档，枚举中的值使用 "小骆驼拼写法" 命名规则。
+按照苹果的接口设计指导准则，枚举值使用小写开头的驼峰命名法，也就是 lowerCamelCase。
 
 ```swift
-enum Shape: Int {
-	case rectangle
-	case square
-	case triangle
-	case circle
+enum Shape {
+  case rectangle
+  case square
+  case rightTriangle
+  case equilateralTriangle
 }
 ```
 
+### 文章
 
-### 类前缀
+当提及散文中的方法时，无歧义是至关重要的。要引用方法名称，请使用最简单的形式。
 
-Swift 中类别（类，结构体）在编译时会把模块设置为默认的命名空间，所以不用为了区分类别而添加前缀。如果担心来自不同模块的两个名称发生冲突，可以在使用时添加模块名称来区分，注意不要滥用模块名称，仅在有可能发生冲突或疑惑的场景下使用。
+1. 编写没有参数的方法名称。**示例：** 接下来，您需要调用 `addTarget` 方法。
+2. 用参数标签写入方法名称。**示例：** 接下来，您需要调用 `addTarget(_:action:)` 方法.
+3. 用参数标签和类型写入完整的方法名称。**示例：** 接下来，您需要调用 `addTarget(_: Any?, action: Selector?)` 方法.
 
-```swift
-import SomeModule
+对于上述示例使用 UIGestureRecognizer，1是明确的和首选的。
 
-let myClass = MyModule.UsefulClass()
-```
+**提示：** 您可以使用 Xcode 的跳转条来查找参数标签的方法。
 
 
 ### 代理
 
-在定义代理方法时，第一个未命名参数应是代理数据源（为了保持参数声明的一致性在 Swift3 引入的）。
+根据苹果接口设计指导文档，如果协议描述的是协议做的事应该命名为名词（如Collection），如果描述的是行为，需添加后缀 -able 或 -ing（如Equatable 和 Resizing）。 如果上述两者都不能满足需求，可以添加 Protocol 作为后缀。
+
+创建自定义代理方法时，未命名的第一个参数应该是委托源。（UIKit 有许多这样的例子）
 
 **首选：**
 
 ```swift
 func namePickerView(_ namePickerView: NamePickerView, didSelectName name: String)
 func namePickerViewShouldReload(_ namePickerView: NamePickerView) -> Bool
+```
+
 **不推荐：**
+
+```swift
 func didSelectName(namePicker: NamePickerViewController, name: String)
 func namePickerShouldReload() -> Bool
 ```
 
-使用编译器提供的上下文推断，可使代码更简洁，清晰。（另请参阅类型推断）
+
+### 使用类型推断上下文
+
+使用编译器提供的上下文推断，可使代码更简洁，清晰。（另请参阅[类型推断](#类型推断)。）
 
 **首选：**
 
@@ -169,110 +204,131 @@ let view = UIView(frame: CGRect.zero)
 
 ### 泛型
 
-泛型类参数应具有描述性，遵守 "大骆驼命名法"。如果一个参数名没有具体的含义，可以使用传统单大写字符，如 T，U 或 V 等。
+通用类型（泛型）参数应该是描述性，遵守 "大骆驼命名法"。如果一个参数名没有具体的含义，可以使用传统单大写字符，如 `T`，`U` 或 `V` 等。
 
 **首选：**
 
 ```swift
-struct Stack<Element>{ ... }
-func writeTo <Target: OutputStream>(to Target: inout Target)
-func swap(_ a: inout T, _ b: inout T)
+struct Stack<Element> { ... }
+func write<Target: OutputStream>(to target: inout Target)
+func swap<T>(_ a: inout T, _ b: inout T)
 ```
 
 **不推荐：**
 
 ```swift
-struct Stack<T>{ ... }
-func write<target: OutputStream> (to target: inout target)
+struct Stack<T> { ... }
+func write<target: OutputStream>(to target: inout target)
 func swap<Thing>(_ a: inout Thing, _ b: inout Thing)
 ```
 
 
-## 代码组织结构
+### 类前缀
 
-在函数分组和 protocol/delegate 实现中要遵循以下一般结构：
+Swift 类型由包含它们的模块自动命名，不应该添加类似 `RW` 这样的类前缀。如果来自两个不同模块的名称相冲突，您可以通过在类型名称前添加模块名称作来区分。注意不要滥用模块名称，仅在有可能发生冲突或疑惑的场景下使用。
+
+Swift 类型自动被模块名设置了名称空间，所以你不需要加一个类的前缀。如果两个来自不同模块的命名冲突了，你可以附加一个模块名到类型命名的前面来消除冲突。
+
+在 Swift 里，每一个模块都是一个命名空间。而在 Objective-C 里没有命名空间的概念，只是在每个类名前面添加前缀，比如 NSArray。
+
+当不同的模块有同名的类名时，需要指明模块名称。
+
 
 ```swift
-// MARK: -
-// MARK: Lifecycle
+import SomeModule
 
-// MARK: -
-// MARK: Public
-
-// MARK: -
-// MARK: Private
-
-// MARK: -
-// MARK: UITextFieldDelegate
-
-// MARK: -
-// MARK: UITableViewDataSource
-
-// MARK: -
-// MARK: UITableViewDelegate
+let myClass = MyModule.UsefulClass()
 ```
 
-## 协议一致性
 
-当一个对象要实现协议一致性时，推荐使用 extension 隔离协议中的方法集，这样让相关方法和协议集中显示在一起，也简化了类支持一个协议和实现相关方法的流程。
+### 语言
+
+使用美式英语。
 
 **首选：**
 
 ```swift
-class MyViewcontroller: UIViewController {
-	// 方法
+let color = "red"
+```
+
+**不推荐：**
+
+```swift
+let colour = "red"
+```
+
+
+## 代码组织
+
+使用`extension`将您的代码组织成逻辑功能块。 每个`extension`都用`// MARK：-`注释来分隔开。
+
+
+### 协议一致性
+
+当一个类遵守一个协议时，使用 `extension` 来组织代码。
+
+**首选：**
+
+```swift
+class MyViewController: UIViewController {
+  // class stuff here
 }
 
-extension MyViewcontroller: UITableViewDataSource {
-	// UITableViewDataSource 方法
+// MARK: - UITableViewDataSource
+extension MyViewController: UITableViewDataSource {
+  // table view data source methods
 }
 
-extension MyViewcontroller: UIScrollViewDelegate {
-	// UIScrollViewDelegate 方法
+// MARK: - UIScrollViewDelegate
+extension MyViewController: UIScrollViewDelegate {
+  // scroll view delegate methods
 }
 ```
 
 **不推荐：**
 
 ```swift
-class MyViewcontroller: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
-	// 所有的方法
+class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
+  // all methods
 }
 ```
 
-对于 UIKit view controllers，建议用 extensions 定义不同的类，按照生命周期，自定义方法，IBAction 分组。
 
+### 无用的代码
 
-## 无用代码
+删除无用的代码，包括 Xcode 生成的模板代码和占位符注释应该删除。
 
-无用的代码，包括 Xcode 生成的模板代码和占位符注释应该删除，除非是有目的性的保留这些代码。
 一些方法内只是简单地调用了父类里面的方法也需要删除，包括 UIApplicationDelegate 内的空方法和无用方法。
 
 **首选：**
 
 ```swift
-override func tableView(tableView: UITableView,numberOfRowsInSectionsection: Int) -> Int{
-	return Database.contacts.count
+override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+  return Database.contacts.count
 }
 ```
+
 **不推荐：**
 
 ```swift
 override func didReceiveMemoryWarning() {
-	super.didReceiveMemoryWarning()
+  super.didReceiveMemoryWarning()
+  // Dispose of any resources that can be recreated.
 }
 
-override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-	return 1
+override func numberOfSections(in tableView: UITableView) -> Int {
+  // #warning Incomplete implementation, return the number of sections
+  return 1
 }
 
-override func tableView(tableView: UITableView,numberOfRowsInSectionsection: Int) -> Int {
-	return Database.contacts.count
+override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+  // #warning Incomplete implementation, return the number of rows
+  return Database.contacts.count
 }
 ```
 
 
-# 最少引入
+### 最少引入
 
 减少不必要的引入，例如引入 Foundation 能满足的情况下不用引入 UIKit。
 
@@ -281,20 +337,17 @@ override func tableView(tableView: UITableView,numberOfRowsInSectionsection: Int
 
 缩进使用 4 个空格，在 Xcode 的偏好设置和项目设置都可以配置。
 
+方法体的大括号和其他大括号（`if`/`else`/`switch`/`while`等）加入一个空格后在行尾开启，在新一行关闭（Xcode 默认）。
 
-## Xcode 偏好设置
-
-
-## 项目设置
-方法体的大括号和其他大括号（`if`/`else`/`switch`/`while`等）首括号和首行语句在同一行，尾括号新起一行。
+提示：⌘A 选中代码后使用 Control-I（或者菜单 `Editor` \ `Structure` \ `Re-Indent`）来调整缩进。
 
 **首选：**
 
 ```swift
 if user.isHappy {
-	// xxoo
+  // Do something
 } else {
-	// ooxx
+  // Do something else
 }
 ```
 
@@ -303,21 +356,22 @@ if user.isHappy {
 ```swift
 if user.isHappy
 {
-	// xxoo
+  // Do something
 }
-else{
-	// ooxx
+else {
+  // Do something else
 }
 ```
 
 方法体内最多只有一个空行，这样可以保持整齐和简洁，如果需要多个空行，说明代码需要重构。
-:左面不要空格，而右面需要保留空格，例外的是三元操作符 `? :` 和空数组 `[:]`
+
+`:` 左面不要空格，而右面需要保留空格，三元操作符 `? :` 和空数组 `[:]`除外。
 
 **首选：**
 
 ```swift
 class TestDatabase: Database {
-	var data: [String: CGFloat] = ["A": 1.2, "B": 3.2]
+  var data: [String: CGFloat] = ["A": 1.2, "B": 3.2]
 }
 ```
 
@@ -325,76 +379,89 @@ class TestDatabase: Database {
 
 ```swift
 class TestDatabase : Database {
-	var data :[String:CGFloat] = ["A" : 1.2, "B":3.2]
+  var data :[String:CGFloat] = ["A" : 1.2, "B":3.2]
 }
 ```
+
+每行长度应保持在70个字符左右，不作强制限制。
+
+确保每个文件结尾都有空白行。
+
+确保每行都不以空白字符作为结尾（`Xcode`->`Preferences`->`Text Editing`->`Automatically trim trailing whitespace` + `Including whitespace-only lines`）。
 
 
 ## 注释
 
-当需要的时候，使用注释来解释阐明特定一块代码的用途，注释必须保持最新，过期的注释要及时删除。
-避免代码中出现注释块，代码本身应尽量起到注释的作用，如果注释是为了生成文档可以例外。
+如果需要注释，它只用来解释为什么这段代码要这么写，而不是解释代码的逻辑。注释必须保持最新，过期的注释要及时删除。
+
+避免代码中出现注释块，代码本身应尽量起到注释的作用。为了生成文档的注释除外。
 
 
-## 类和结构体应该使用哪一个
+## 类和结构体
+
+
+### 应该使用哪一个
 
 结构体是值类型。结构体在使用中没有标识。一个数组包含`[a, b, c]`和另外一个数组包含`[a, b, c]`是完全一样的，它们完全可以互相替换，使用第一个还是使用第二个都一样，因为它们代表的是同一个东西，这就是为什么数组是结构体。
 
 类是引用类型。类使用的场景是需要一个标识或者需要一个特定的生命周期。假设你需要对人抽象为一个类，因为两个人，是两个不同的东西。即使两个人有同样的名字和生日，也不能确定这两个人是一样的。但是人的生日是一个结构体，因为日期 1950/03/03 和另外一个日期 1950/03/03 是相同的，日期是结构体没有唯一标示。
 
-有时一些事物应该定义为结构体，但是还需要兼容 AnyObject 或者已经在以前的历史版本中定义为类（NSDate、NSSet）， 所以尽可能的注意类和结构体之间的区别。
+有时一些事物应该定义为结构体，但是还需要兼容 `AnyObject` 或者已经在以前的历史版本中定义为类（`NSDate`、`NSSet`）， 所以尽可能的注意类和结构体之间的区别。
 
 
-## 类定义
+### 类定义
 
 下面是一个设计良好的类定义：
 
 ```swift
 class Circle: Shape {
-	var x: Int, y: Int
-	var radius: Double
-	var diameter: Double {
-		get {
-			return radius * 2
-		}
-		set {
-			radius = newValue / 2
-		}
-	}
+  var x: Int, y: Int
+  var radius: Double
+  var diameter: Double {
+    get {
+      return radius * 2
+    }
+    set {
+      radius = newValue / 2
+    }
+  }
 
-	init(x: Int, y: Int, radius: Double) {
-		self.x = x
-		self.y = y
-		self.radius = radius
-	}
+  init(x: Int, y: Int, radius: Double) {
+    self.x = x
+    self.y = y
+    self.radius = radius
+  }
 
-	convenience init(x: Int, y: Int, diameter: Double) {
-		self.init(x: x, y: y, radius: diameter / 2)
-	}
+  convenience init(x: Int, y: Int, diameter: Double) {
+    self.init(x: x, y: y, radius: diameter / 2)
+  }
 
-	override func area() -> Double {
-		return Double.pi * radius * radius
-	}
+  override func area() -> Double {
+    return Double.pi * radius * radius
+  }
 }
 
 extension Circle: CustomStringConvertible {
-	var description: String {
-		return "center = \(centerString) area = \(area())"
-	}
-	private var centerString: String {
-		return "(\(x),\(y))"
-	}
+  var description: String {
+    return "center = \(centerString) area = \(area())"
+  }
+  private var centerString: String {
+    return "(\(x),\(y))"
+  }
 }
 ```
 
-**上面的例子展示了下面的设计准则：**
+上面的例子展示了下面的设计准则：
+
 * 属性、变量、常量和参数等在声明定义时，其中：符号后有空格，而符号前没有空格，比如 x: Int 和Circle: Shape。
 * 如果定义多个变量/数据结构时出于相同的目的和上下文，可以定义在同一行。
 * 缩进 getter，setter 的定义和属性观察器的定义。
 * 不需要添加 internal 这样的默认的修饰符，也不需要在重写一个方法时添加访问修饰符。
+* 使用 extensions 组织扩展功能（例如打印）。
+* 隐藏非共享的实现细节，如`centerString`在扩展中使用`private`访问控制。
 
 
-## self 的使用
+### self 的使用
 
 为了保持简洁，可以避免使用 self 关键词，因为 Swift 在访问对象属性和调用对象方法不需要使用 self。
 
@@ -414,15 +481,15 @@ class BoardLocation  {
 ```
 
 
-## 计算属性
+### 计算属性
 
-为了保持简洁，如果一个属性是只读的，请忽略掉 get 语句。因为只有在需要定义 set 语句的时候才需要get语句。
+为了保持简洁，如果一个属性是只读的，请忽略掉 get 语句。因为只有在需要定义 set 语句的时候才需要 get 语句。
 
 **首选：**
 
 ```swift
 var diameter: Double {
-	return radius  *  2
+  return radius * 2
 }
 ```
 
@@ -430,61 +497,62 @@ var diameter: Double {
 
 ```swift
 var diameter: Double {
-	get {
-		return radius * 2
-	}
+  get {
+    return radius * 2
+  }
 }
 ```
 
 
-## Final
+### Final
 
 给那些不打算被继承的类使用 final 修饰符，例如：
 
 ```swift
+// Turn any generic type into a reference type using this Box class.
 final class Box<T> {
-	let value: T
-	init(_ value: T) {
-		self.value = value
-	}
+  let value: T
+  init(_ value: T) {
+    self.value = value
+  }
 }
 ```
 
 
 ## 函数声明
 
-在定义短函数声明时保持在一行，一行内包括头括号：
+在声明较短函数时保持在一行，一行内包括前括号：
 
 ```swift
 func reticulateSplines(spline: [Double]) -> Bool {
-	//TODO: xxxx
+  // reticulate code goes here
 }
 ```
 
 对于声明较长的函数时，在适当的位置换行并在第二行多添加一个缩进：
 
 ```swift
-func reticulateSplines(spline: [Double], adjustmentFactor: Double, translateConstant:Int, comment:String) -> Bool {
-	//TODO: xxxx
+func reticulateSplines(spline: [Double], adjustmentFactor: Double,
+    translateConstant: Int, comment: String) -> Bool {
+  // reticulate code goes here
 }
 ```
 
 ## 闭包表达式
 
 仅在闭包表达式参数在参数列表中最后一个时，使用尾随闭包表达式，闭包参数命名要有描述性。
-避免以冒号对齐的方式来调用方法。因为有时方法签名可能有 3 个以上的冒号和冒号对齐会使代码更加易读。即使冒号对齐的方法包含代码块，也不要这样做，因为 Xcode 的对齐方式令它难以辨认。
 
 **首选：**
 
 ```swift
 UIView.animate(withDuration: 1.0) {
-	self.myView.alpha = 0
+  self.myView.alpha = 0
 }
 
 UIView.animate(withDuration: 1.0, animations: {
-	self.myView.alpha = 0
+  self.myView.alpha = 0
 }, completion: { finished in
-	self.myView.removeFromSuperview()
+  self.myView.removeFromSuperview()
 })
 ```
 
@@ -492,13 +560,13 @@ UIView.animate(withDuration: 1.0, animations: {
 
 ```swift
 UIView.animate(withDuration: 1.0, animations: {
-	self.myView.alpha = 0
+  self.myView.alpha = 0
 })
 
 UIView.animate(withDuration: 1.0, animations: {
-	self.myView.alpha = 0
+  self.myView.alpha = 0
 }) { f in
-	self.myView.removeFromSuperview()
+  self.myView.removeFromSuperview()
 }
 ```
 
@@ -506,19 +574,21 @@ UIView.animate(withDuration: 1.0, animations: {
 
 ```swift
 attendeeList.sort { a, b in
-	a > b
+  a > b
 }
 ```
 
-链式方法使用尾随闭包会更清晰易读，至于如何使用空格，换行，还是使用命名和匿名参数不做具体要求。
+链式方法使用尾随闭包会更清晰易读，至于如何使用空格，换行，还是使用命名和匿名参数不做具体要求。例如：
 
 ```swift
-let value = numbers.map{ $0 * 2 }.filter{ $0 % 3 == 0 }.index(of: 90)
+let value = numbers.map { $0 * 2 }.filter { $0 % 3 == 0 }.index(of: 90)
+
 let value = numbers
-	.map{ $0 * 2 }
-	.filter{ $0 > 50 }
-	.map{ $0 + 10 }
+  .map {$0 * 2}
+  .filter {$0 > 50}
+  .map {$0 + 10}
 ```
+
 
 ## 类型
 
@@ -527,31 +597,37 @@ let value = numbers
 **首选：**
 
 ```swift
-let width = 120.0  // Double
-let widthString = (width as NSNumber).stringValue // String
-**不推荐：**
-let width: NSNumber = 120.0 // NSNumber
-let widthString: NSString=width.stringValue  // NSString
+let width = 120.0                                    // Double
+let widthString = (width as NSNumber).stringValue    // String
 ```
 
+**不推荐：**
+
+```swift
+let width: NSNumber = 120.0                          // NSNumber
+let widthString: NSString = width.stringValue        // NSString
+```
 在 Sprite Kit 代码中，使用 CGFloat 可以避免数据多次转换，让代码更简洁。
 
-## 常量
+
+### 常量
 
 定义常量使用 let 关键字，定义变量使用 var 关键字，如果变量的值未来不会发生变化要使用常量。
 
 **建议：**
 > 一个好的技巧是：使用 let 定义任何东西，只有在编译器提出警告需要改变的时候才修改为 var 定义。
+
 你可以使用类型属性来定义类型常量而不是实例常量，使用 static let 可以定义类型属性常量。 这样方式定义类别属性整体上优于全局常量，因为更容易区分于实例属性。
 
 **首选：**
 
 ```swift
 enum Math {
-	static let e = 2.718281828459045235360287
-	static let pi = 3.141592653589793238462643
+  static let e = 2.718281828459045235360287
+  static let root2 = 1.41421356237309504880168872
 }
-let hypotenuse = radius * Math.pi * 2 //周长
+
+let hypotenuse = side * Math.root2
 ```
 
 **Note：**使用枚举的好处是变量不会被无意初始化，且全局有效。
@@ -559,21 +635,23 @@ let hypotenuse = radius * Math.pi * 2 //周长
 **不推荐：**
 
 ```swift
-let e = 2.718281828459045235360287// 污染全局命名空间
-let pi = 3.141592653589793238462643
-let hypotenuse = radius * pi * 2 //pi是实例数据还是全局常量？
+let e = 2.718281828459045235360287  // pollutes global namespace
+let root2 = 1.41421356237309504880168872
+
+let hypotenuse = side * root2 // what is root2?
 ```
 
 
-## 静态方法和变量类型属性
+### 静态方法和变量类型属性
 
 静态方法和类别属性的工作原理类似于全局方法和全局属性，应该节制使用。它们的使用场景在于如果某些功能局限于特别的类型或和 Objective-C 互相调用。
 
-
-## 可选类型
+### 可选类型
 
 可以变量和函数返回值声明为可选类型（?），如果 nil 值可以接受。
+
 当你确认实例变量会稍晚在使用前初始化，可以在声明时使用 ! 来隐式的拆包类型，比如在 `viewDidLoad()` 中会初始化的子视图。
+
 当你访问一个可选类型值时，如果只需要访问一次或者在可选值链中有多个可选类型值时，请使用可选类型值链：
 
 ```swift
@@ -584,7 +662,7 @@ self.textContainer?.textLabel?.setNeedsDisplay()
 
 ```swift
 if let textContainer = self.textContainer {
-	// 对textContainer多次操作
+  // do many things with textContainer
 }
 ```
 
@@ -597,8 +675,10 @@ if let textContainer = self.textContainer {
 ```swift
 var subview: UIView?
 var volume: Double?
-if let subview = subview, volume = volume {
-	//TODO: xxx
+
+// later on...
+if let subview = subview, let volume = volume {
+  // do something with unwrapped subview and volume
 }
 ```
 
@@ -607,15 +687,16 @@ if let subview = subview, volume = volume {
 ```swift
 var optionalSubview: UIView?
 var volume: Double?
+
 if let unwrappedSubview = optionalSubview {
-	if let realVolume = volume {
-		// ooxx
-	}
+  if let realVolume = volume {
+    // do something with unwrappedSubview and realVolume
+  }
 }
 ```
 
 
-## 结构体构造器
+### 结构体构造器
 
 使用 Swift 原生的结构体构造器而不是传统的的 CGGeometry 构造器。
 
@@ -636,7 +717,7 @@ let centerPoint = CGPointMake(96.0, 42.0)
 推荐使用结构体内部的常量 CGRect.infiniteRect, CGRect.nullRect 等，来替代全局常量CGRectInfinite, CGRectNull 等。对于已经存在的变量值，可以简写成 .zero。
 
 
-## 延迟初始化
+### 延迟初始化
 
 延迟初始化用来细致地控制对象的生命周期，这对于想实现延迟加载视图的 UIViewController 特别有用，你可以使用即时被调用闭包或私有构造方法：
 
@@ -644,39 +725,42 @@ let centerPoint = CGPointMake(96.0, 42.0)
 lazy var locationManager: CLLocationManager = self.makeLocationManager()
 
 private func makeLocationManager() -> CLLocationManager {
-	let manager = CLLocationManager()
-	manager.desiredAccuracy = kCLLocationAccuracyBest
-	manager.delegate = self
-	manager.requestAlwaysAuthorization()
-	return manager
+  let manager = CLLocationManager()
+  manager.desiredAccuracy = kCLLocationAccuracyBest
+  manager.delegate = self
+  manager.requestAlwaysAuthorization()
+  return manager
 }
 ```
 
-**注意：**LocationManager 的负面效果会弹出对话框要求用户提供权限，这是做延时加载的原因。
+**注意：**
+
+ - `[unowned self]` 在这里不是必须的，并没有互相引用。
+ - 定位管理的负面效果会弹出对话框要求用户提供权限，这是做延时加载的原因。
 
 
-## 类型推断
+### 类型推断
 
 推荐使用更加紧凑的代码，让编译器能够推断出每个常量和变量的类型。类型推断也适用于小的数组和字典，如果需要可以指定特定的类型，如 CGFloat 或 Int16。
-	
+
 **首选：**
 
 ```swift
 let message = "Click the button"
 let currentBounds = computeViewBounds()
-var names = ["Mic","Sam","Christine"]
+var names = ["Mic", "Sam", "Christine"]
 let maximumWidth: CGFloat = 106.5
 ```
 
 **不推荐：**
 
 ```swift
-let message:String = "Click the button"
+let message: String = "Click the button"
 let currentBounds: CGRect = computeViewBounds()
 let names = [String]()
 ```
 
-## 类型注解对空的数组和字典
+#### 类型注解对空的数组和字典
 
 对空的数据和字典，使用类型注解。
 
@@ -696,7 +780,8 @@ var lookup = [String: Int]()
 
 **注意：**这意味着选择描述性名称更加重要。
 
-## 语法糖
+
+### 语法糖
 
 使用简洁的类型定义语法，而不是全称语法。
 
@@ -720,29 +805,27 @@ var faxNumber: Optional<Int>
 
 自由函数不依附于任何类或类型，应该节制地使用。如果可能优先使用方法而不是自由函数，这有助于代码的可读性和易发现性。
 
-
+自由函数使用的场景是当不确定它和具体的类别或实例相关。
 
 **首选：**
 
 ```swift
-let sorted = items.mergeSort() //易发现性
-rocket.launch()  //可读性
+let sorted = items.mergeSorted()  // easily discoverable
+rocket.launch()  // acts on the model
 ```
 
 **不推荐：**
 
 ```swift
-let sorted = mergeSort(items)// 不易被发现
+let sorted = mergeSort(items)  // hard to discover
 launch(&rocket)
 ```
 
-## 自由函数
-
-自由函数使用的场景是当不确定它和具体的类别或实例相关。
+**自由函数实例：**
 
 ```swift
-let tuples = zip(a, b)
-let value = max(x,y,z) //天然自由函数
+let tuples = zip(a, b)  // feels natural as a free function (symmetry)
+let value = max(x, y, z)  // another free function that feels natural
 ```
 
 
@@ -751,7 +834,7 @@ let value = max(x,y,z) //天然自由函数
 代码应避免指针循环引用，分析对象图谱，使用弱引用和未知引用避免强引用循环。另外使用值类型（结构体和枚举）可以避免循环引用。
 
 
-## 延长对象生命周期
+### 延长对象生命周期
 
 延长对象生命周期习惯上使用 `[weak self]` 和 `guard let strongSelf = self else { return }`。
 
@@ -761,25 +844,31 @@ let value = max(x,y,z) //天然自由函数
 
 ```swift
 resource.request().onComplete { [weak self] response in
-	guard let strongSelf = self else {return}
-	let model = strongSelf.updateModel(response)
-	strongSelf.updateUI(model)
+  guard let strongSelf = self else {
+    return
+  }
+  let model = strongSelf.updateModel(response)
+  strongSelf.updateUI(model)
 }
 ```
 
 **不推荐：**
 
 ```swift
-// 如果self在response之前销毁会崩溃
-resource.request().onComplete { [unowned self]  response in
-	let model = self.updateModel(response)
-	self.updateUI(model)
+// might crash if self is released before response returns
+resource.request().onComplete { [unowned self] response in
+  let model = self.updateModel(response)
+  self.updateUI(model)
 }
+```
 
-//self可能在updateModel和updateUI被释放
+**不推荐：**
+
+```swift
+// deallocate could happen between updating the model and updating UI
 resource.request().onComplete { [weak self] response in
-	let model = self?.updateModel(response)
-	self?.updateUI(model)
+  let model = self?.updateModel(response)
+  self?.updateUI(model)
 }
 ```
 
@@ -788,25 +877,30 @@ resource.request().onComplete { [weak self] response in
 
 合理的使用 private 和  fileprivate，推荐使用 private, 在使用 extension 时可使用 fileprivate。
 
+当您需要完整的访问控制规范时，才明确地使用`open`，`public`和`internal`。
+
 访问控制符一般放在属性修饰符的最前面，除非需要使用 static 修饰符，@IBAction, @IBOutlet 或 @discardableResult。
 
 **首选：**
 
 ```swift
-class TimeMachine {
-	private dynamic lazy var fluxCapacitor = FluxCapacitor()
-}
 private let message = "Great Scott!"
+
+class TimeMachine {  
+  fileprivate dynamic lazy var fluxCapacitor = FluxCapacitor()
+}
 ```
 
 **不推荐：**
 
 ```swift
-class TimeMachine {
-	lazy dynamic private var fluxCapacitor=FluxCapacitor()
-}
 fileprivate let message = "Great Scott!"
+
+class TimeMachine {  
+  lazy dynamic fileprivate var fluxCapacitor = FluxCapacitor()
+}
 ```
+
 
 ## 控制流程
 
@@ -815,56 +909,60 @@ fileprivate let message = "Great Scott!"
 **首选：**
 
 ```swift
-for _ in 0 ..< 3 {
-	print("Hello three times")
+for _ in 0..<3 {
+  print("Hello three times")
 }
 
-for(index, person) in attendeeList.enumerate() {
-	print("\(person)is at position #\(index)")
+for (index, person) in attendeeList.enumerated() {
+  print("\(person) is at position #\(index)")
 }
 
-for index in 0.stride(from: 0, to: items.count, by: 2) {
-	print(index)
+for index in stride(from: 0, to: items.count, by: 2) {
+  print(index)
 }
 
-for index in (0...3).reverse() {
-	print(index)
+for index in (0...3).reversed() {
+  print(index)
 }
 ```
 
 **不推荐：**
 
 ```swift
-var i=0
-while i<3 {
-	print("Hello three times")
-	i+=1
+var i = 0
+while i < 3 {
+  print("Hello three times")
+  i += 1
 }
 
-var i=0
-while i<3 {
-	let person = attendeeList[i]
-	print("\(person)is at position #\(i)")
-	i+=1
+
+var i = 0
+while i < attendeeList.count {
+  let person = attendeeList[i]
+  print("\(person) is at position #\(i)")
+  i += 1
 }
 ```
 
+
 ## 黄金路径
 
-当编码遇到条件判断时，左边的距离是黄金路径或幸福路径，因为路径越短，速度越快。不要嵌套 if 循环，多个返回语句是可以的。guard 就为此而生的。
+当编码遇到条件判断时，左边的距离是黄金路径或幸福路径，因为路径越短，速度越快。不要嵌套 `if` 循环，多个返回语句是可以的。`guard` 就为此而生的。
 
 **首选：**
 
 ```swift
-func computeFFT(context: Context?, inputData: InputData?)  throws -> Frequencies {
-	guard let context = context else {
-		throwFFTError.NoContext
-	}
-	guard let inputData = inputData else {
-		throwFFTError.NoInputData
-	}
-	//计算frequencies
-	return frequencies
+func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
+
+  guard let context = context else {
+    throw FFTError.noContext
+  }
+  guard let inputData = inputData else {
+    throw FFTError.noInputData
+  }
+
+  // use context and input to compute the frequencies
+  return frequencies
 }
 ```
 
@@ -872,55 +970,58 @@ func computeFFT(context: Context?, inputData: InputData?)  throws -> Frequencies
 
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
-	if let context = context {
-		if let inputData = inputData {
-			// 计算frequencies
-			return frequencies
-		} else {
-			throwFFTError.NoInputData
-		}
-	} else {
-		throwFFTError.NoContext
-	}
+
+  if let context = context {
+    if let inputData = inputData {
+      // use context and input to compute the frequencies
+
+      return frequencies
+    } else {
+      throw FFTError.noInputData
+    }
+  } else {
+    throw FFTError.noContext
+  }
 }
 ```
 
-当有多个条件需要用 guard 或 if let 解包，可用复合语句避免嵌套。
+当有多个条件需要用 `guard` 或 `if let` 解包，可用复合语句避免嵌套。例如：
 
 **首选：**
 
 ```swift
-guard let number1 = number1, number2 = number2, number3 = number3 else {
-	fatalError("impossible")
+guard let number1 = number1,
+      let number2 = number2,
+      let number3 = number3 else {
+  fatalError("impossible")
 }
-//TODO: 处理number
+// do something with numbers
 ```
 
 **不推荐：**
 
 ```swift
 if let number1 = number1 {
-	if let number2 = number2 {
-		if let number3 = number3 {
-			//TODO: 处理number
-		} else {
-			fatalError("impossible")
-		}
-	} else {
-		fatalError("impossible")
-	}
+  if let number2 = number2 {
+    if let number3 = number3 {
+      // do something with numbers
+    } else {
+      fatalError("impossible")
+    }
+  } else {
+    fatalError("impossible")
+  }
 } else {
-	fatalError("impossible")
+  fatalError("impossible")
 }
 ```
 
+### 失败防护
 
-## 失败防护
-
-防护语句的退出有很多方式，一般都是单行语句，如 return, throw, break, continue 和fatalError() 等。 避免出现大的代码块，如果清理代码需要多个退出点，可以用 defer 模块避免重复清理代码。
+防护语句的退出有很多方式，一般都是单行语句，如 `return`, `throw`, `break`, `continue` 和`fatalError()` 等。 避免出现大的代码块，如果清理代码需要多个退出点，可以用 defer 模块避免重复清理代码。
 
 
-## 分号
+##  分号
 
 Swift 不强制每条语句有分号，当一行内写多个语句的时候是必须的。不要在一行里写多个语句。
 
@@ -947,38 +1048,39 @@ let swift = "not a scripting language";
 
 ```swift
 if name == "Hello" {
-	print("World")
+  print("World")
 }
 ```
 
 **不推荐：**
 
 ```swift
-if(name == "Hello") {
-	print("World")
+if (name == "Hello") {
+  print("World")
 }
 ```
 
 在更复杂的表达式中，有时可选括号可以使代码更清晰地读取。
 
+**首选：**
+
 ```swift
 let playerMark = (player == current ? "X" : "O")
 ```
 
-## 笑脸
 
-笑脸是 raywenderlich.com 网站非常突出的风格功能，正确的笑容表示编码主题的巨大幸福感和兴奋度是非常重要的。 使用闭合方括号], 因为它代表了使用 ASCII 艺术捕获的最大笑容。 右括号）创造了一个半心半意的微笑，因此不是首选。
+## 组织和应用的标识符
 
-**首选：**
+在涉及 Xcode 项目的地方，`Organization` 应设置为组织名称，并将 `Bundle Identifier` 设置为 `com.组织缩写.项目名称`。
 
-```
-:]
-```
 
-**不推荐：**
+## 参考
 
-```
-:)
-```
+* [The Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
+* [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/index.html)
+* [Using Swift with Cocoa and Objective-C](https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/BuildingCocoaApps/index.html)
+* [Swift Standard Library Reference](https://developer.apple.com/library/prerelease/ios/documentation/General/Reference/SwiftStandardLibraryReference/index.html)
+
+
 
 
