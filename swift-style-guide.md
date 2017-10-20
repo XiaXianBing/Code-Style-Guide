@@ -3,7 +3,7 @@
 
 ## 说明
 
-[API Design Guidelines](https://swift.org/documentation/api-design-guidelines)是苹果专门针对 API 的一个规范，本规范涉及到一些相关的内容，大都是保持和苹果的规范一致。
+[API Design Guidelines](https://swift.org/documentation/api-design-guidelines) 是苹果专门针对 API 的一个规范，本规范涉及到一些相关的内容，大都是保持和苹果的规范一致。
 
 本编码规范基于 [The Official raywenderlich.com Swift Style Guide](https://github.com/raywenderlich/swift-style-guide)，并加入了自己的一些偏好。
 
